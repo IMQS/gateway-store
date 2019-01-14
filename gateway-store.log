@@ -1,0 +1,32 @@
+2019-01-14T10:57:55.912416+0200 [D] DB Server Created
+2019-01-14T10:57:55.912416+0200 [D] Running migrate
+2019-01-14T10:57:55.971399+0200 [E] Could not insert the data pq: relation "public.messages" does not exist
+2019-01-14T10:59:06.924364+0200 [D] DB Server Created
+2019-01-14T10:59:06.924364+0200 [D] Running migrate
+2019-01-14T10:59:06.973360+0200 [E] Could not insert the data pq: relation "public.messages" does not exist
+2019-01-14T11:01:18.533449+0200 [D] Running migrate
+2019-01-14T11:01:18.663467+0200 [D] Migrate Done
+2019-01-14T11:01:18.664451+0200 [D] DB Server Created
+2019-01-14T11:01:18.664451+0200 [I] Running Database Archive
+2019-01-14T11:01:18.714446+0200 [E] Could not insert the data pq: null value in column "id" violates not-null constraint
+2019-01-14T11:05:25.634681+0200 [D] Running migrate
+2019-01-14T11:05:25.690682+0200 [I] Database migration: No new migrations
+2019-01-14T11:05:25.690682+0200 [D] DB Server Created
+2019-01-14T11:05:25.733681+0200 [E] Could not insert the data pq: column "clientId" of relation "messages" does not exist
+2019-01-14T11:05:53.650197+0200 [D] Running migrate
+2019-01-14T11:05:53.699200+0200 [I] Database migration: No new migrations
+2019-01-14T11:05:53.699200+0200 [D] DB Server Created
+2019-01-14T11:05:53.751218+0200 [E] Could not insert the data no LastInsertId available
+2019-01-14T11:07:14.871981+0200 [D] Running migrate
+2019-01-14T11:07:14.939981+0200 [I] Database migration: No new migrations
+2019-01-14T11:07:14.939981+0200 [D] DB Server Created
+2019-01-14T11:07:14.990981+0200 [D] Created the log
+2019-01-14T11:07:15.035982+0200 [D] Running migrate
+2019-01-14T11:07:15.108982+0200 [I] Database migration: No new migrations
+2019-01-14T11:07:15.109982+0200 [D] DB Server Created
+2019-01-14T11:07:15.167983+0200 [E] Failed to start http listen and serve: listen tcp :2011: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+2019-01-14T11:07:15.167983+0200 [E] Error running HTTP server: listen tcp :2011: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+2019-01-14T11:07:15.224981+0200 [D] Running migrate
+2019-01-14T11:07:15.285981+0200 [I] Database migration: No new migrations
+2019-01-14T11:07:15.285981+0200 [D] DB Server Created
+2019-01-14T11:07:15.288982+0200 [D] [GET] "/ping" 0.000ms

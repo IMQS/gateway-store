@@ -1,0 +1,14 @@
+{
+  "server": {
+    "port": ":2011"
+  },
+  "db": {
+    "dbname": "gateway_test",
+    "username": "imqs",
+    "password": "1mq5p@55w0rd",
+    "host": "localhost",
+    "port": "5432"
+  },
+  "logfile": "gateway-store.log",
+  "loglevel": "DEBUG"
+}
