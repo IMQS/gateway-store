@@ -10,5 +10,5 @@
     "port": "5432"
   },
   "logfile": "gateway-store.log",
-  "loglevel": "DEBUG"
+  "loglevel": "TRACE"
 }
