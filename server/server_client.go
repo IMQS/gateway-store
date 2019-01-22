@@ -1,7 +1,6 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -21,18 +20,16 @@ func (s *Server) readAllClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jData, err := json.Marshal(&res)
+	clientData, err := json.Marshal(&res)
 	if err != nil {
 		http.Error(w, "Could not marshal JSON", http.StatusInternalServerError)
 		return
 	}
 
-	n := bytes.IndexByte(jData, 0)
-	str := string(jData[:n])
-	s.globals.Log.Tracef("%v", str)
+	s.globals.Log.Debugf("Json: %v", clientData)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jData)
+	w.Write(clientData)
 }
 
 func (s *Server) readClient(w http.ResponseWriter, r *http.Request) {

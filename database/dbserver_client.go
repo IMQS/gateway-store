@@ -1,12 +1,16 @@
 package database
 
-type Client struct {
-	id       int32   `json:"id"`
-	clientId int32   `json:"clientId"`
-	name     *string `json:"name"`
+type Clients struct {
+	ClientArray []Client `json:"clients"`
 }
 
-func (s *DBServer) GetAllClients() (*[]Client, error) {
+type Client struct {
+	id       int32  `json:"id"`
+	clientId string `json:"clientId"`
+	name     string `json:"name"`
+}
+
+func (s *DBServer) GetAllClients() (*Clients, error) {
 	cs := []Client{}
 	rows, err := s.connPool.Query(`SELECT id, clientId, name FROM public.client `)
 	if err != nil {
@@ -21,7 +25,11 @@ func (s *DBServer) GetAllClients() (*[]Client, error) {
 		}
 		cs = append(cs, c)
 	}
-	return &cs, nil
+	s.log.Debugf("%v", cs)
+	ca := Clients{}
+	ca.ClientArray = cs
+	s.log.Debugf("%v", ca)
+	return &ca, nil
 }
 
 func (s *DBServer) GetClient(id int32) (*Client, error) {

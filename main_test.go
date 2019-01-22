@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/IMQS/gateway-store/config"
-	"github.com/IMQS/gateway-store/database"
 	"github.com/IMQS/gateway-store/globals"
 	server2 "github.com/IMQS/gateway-store/server"
 	"io/ioutil"
@@ -22,11 +21,14 @@ var g *globals.Globals
 var data = [...]string{
 	`INSERT INTO public.type(name) VALUES ('DEPRECIATION');`,
 	`INSERT INTO public.client( clientid, name) VALUES ('2' , 'ADM');`,
+	`INSERT INTO public.client( clientid, name) VALUES ('3' , 'COU');`,
 	`INSERT INTO public.messages( clientId, type, message) 
 	VALUES ('2', 'DEPRECIATION', 
 	'{ "MANDT": "101", "BUKRS": "1000", "ASSET": "000000010000", "ANLN2": "0000", "GJAHR": 2018, "PERAF": 7, "INT_ID": 8573,"BATCHNO": 1, "KOSTL": "FX20006800", "NAFAZ": -907963,"DATETO": "2018-01-31"}'
 	);`,
 }
+
+var count int32 = 1
 
 func setup() (*globals.Globals, *sql.DB, error) {
 
@@ -76,7 +78,7 @@ func execute(g *globals.Globals, pgdb *sql.DB, dt string) error {
 	_, err := pgdb.Exec(dt)
 	if err != nil {
 		g.Log.Errorf("Could not insert the data %v", err)
-		return errors.New("Setup failed")
+		return errors.New("Setup failed. Data insertion failed")
 	}
 	return nil
 }
@@ -85,7 +87,7 @@ func teardown(pgdb *sql.DB) error {
 	_, err := pgdb.Exec("DROP DATABASE gateway_test;")
 	if err != nil {
 		g.Log.Errorf("Could not insert the data %v", err)
-		return errors.New("Setup failed")
+		return errors.New("Setup failed. Could not delete the database")
 	}
 	return nil
 }
@@ -118,26 +120,12 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	g.Log.Debug("Created the log")
-
 	retCode := m.Run()
 	if err := teardown(db); err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 	os.Exit(retCode)
-}
-
-func TestDatabase(t *testing.T) {
-	g, _, err := setup()
-
-	if err != nil {
-		t.Errorf("Error config init %v", err)
-	}
-
-	db, err := database.NewDBServer(g.Config.Db, g.Log)
-
-	defer db.Close()
 }
 
 func TestPing(t *testing.T) {
@@ -166,14 +154,19 @@ func TestReadAllClient(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var res map[string]interface{}
-	err = json.Unmarshal(body, &res)
+
+	var clientsMap map[string][]map[string]string
+	err = json.Unmarshal(body, &clientsMap)
 	if err != nil {
 		t.Fatal(err)
 	}
-	g.Log.Tracef("%v", &res)
+	g.Log.Debugf("Clients List : %v", clientsMap)
 
-	name := string(res["name"].(string))
+	clients := clientsMap["clients"]
+
+	client := clients[1]
+
+	name := client["name"]
 	if name != "ADM" {
 		t.Fatalf("Returned id mismatch, expected '%v' got '%v'", "ADM", name)
 	}
