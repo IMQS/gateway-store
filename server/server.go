@@ -20,6 +20,16 @@ type Server struct {
 	migrationMutex *sync.RWMutex
 }
 
+// AquireRLock Used for testing only
+func (s *Server) AquireRLock() {
+	s.migrationMutex.RLock()
+}
+
+// ReleaseRUnlock Used for testing only
+func (s *Server) ReleaseRUnlock() {
+	s.migrationMutex.RUnlock()
+}
+
 func (s *Server) migrationBlockingHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.migrationMutex.RLock()
@@ -95,13 +105,13 @@ func NewServer(g *globals.Globals) *Server {
 	r.Handle("/client/{id:[0-9]+}/{name:[A-Za-z0-9]+}", createTypeHandler).Methods(http.MethodPost)
 
 	readTypeAllHandler := defaultHandler.ThenFunc(s.readAllType)
-	r.Handle("/client", readTypeAllHandler).Methods(http.MethodGet)
+	r.Handle("/type", readTypeAllHandler).Methods(http.MethodGet)
 
 	readType := defaultHandler.ThenFunc(s.readType)
-	r.Handle("/client/{id:[0-9]+}", readType).Methods(http.MethodGet)
+	r.Handle("/type/{id:[0-9]+}", readType).Methods(http.MethodGet)
 
 	deleteType := defaultHandler.ThenFunc(s.deleteType)
-	r.Handle("/client/{id:[0-9]+}", deleteType).Methods(http.MethodDelete)
+	r.Handle("/type/{id:[0-9]+}", deleteType).Methods(http.MethodDelete)
 
 	//Message
 	createHandler := defaultHandler.ThenFunc(s.create)

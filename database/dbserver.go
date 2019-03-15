@@ -61,6 +61,11 @@ func (s *DBServer) Close() error {
 	return nil
 }
 
+//Used for testing only
+func (s *DBServer) QueryRow(id string) *pgx.Row {
+	return s.connPool.QueryRow("Select id from public.client where clientId = $1", id)
+}
+
 // buildInsertQueryBuilder creates an INSERT statement into `table` using
 // `fields` to specify the specific fields to be inserted
 func buildInsertQueryBuilder(table string, fields []string, returnRowID bool) string {

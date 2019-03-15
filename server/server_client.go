@@ -12,7 +12,11 @@ func (s *Server) createClient(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) readAllClient(w http.ResponseWriter, r *http.Request) {
-	res, err := s.globals.DB.GetAllClients()
+
+	var res interface{}
+	var err error
+
+	res, err = s.globals.DB.GetAllClients()
 
 	if err != nil {
 		s.globals.Log.Errorf("Failed to find data for %s", err)
@@ -20,21 +24,20 @@ func (s *Server) readAllClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clientData, err := json.Marshal(&res)
+	clientsJSON, err := json.Marshal(res)
 	if err != nil {
-		http.Error(w, "Could not marshal JSON", http.StatusInternalServerError)
+		http.Error(w, "Could not marshal JSON"+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	s.globals.Log.Debugf("Json: %v", clientData)
+	s.globals.Log.Debugf("S. Client JSON %v", string(clientsJSON))
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(clientData)
+	w.Write(clientsJSON)
 }
 
 func (s *Server) readClient(w http.ResponseWriter, r *http.Request) {
 	var rowid int64
-	var id int32
+	var id int
 	var res interface{}
 	var err error
 
@@ -46,7 +49,7 @@ func (s *Server) readClient(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to parse 'id' parameter to integer", http.StatusBadRequest)
 			return
 		}
-		id = int32(rowid)
+		id = int(rowid)
 	} else {
 		http.Error(w, "'id' parameter missing", http.StatusBadRequest)
 		return
@@ -56,7 +59,7 @@ func (s *Server) readClient(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		s.globals.Log.Errorf("Failed to find data for %s", err)
-		http.Error(w, "Failed to get data : "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to get data : "+err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -76,5 +79,32 @@ func (s *Server) updateClient(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) deleteClient(w http.ResponseWriter, r *http.Request) {
+	var rowid int64
+	var id int
+	//	var res interface{}
+	var err error
+
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if len(idStr) != 0 {
+		if rowid, err = strconv.ParseInt(idStr, 10, 32); err != nil {
+			s.globals.Log.Error("Failed to parse 'id' parameter to integer")
+			http.Error(w, "Failed to parse 'id' parameter to integer", http.StatusBadRequest)
+			return
+		}
+		id = int(rowid)
+	} else {
+		http.Error(w, "'id' parameter missing", http.StatusBadRequest)
+		return
+	}
+
+	_, err = s.globals.DB.DeleteClient(id)
+
+	if err != nil {
+		s.globals.Log.Errorf("Failed to find data for %s", err)
+		http.Error(w, "Failed to get data : "+err.Error(), http.StatusNotFound)
+		return
+	}
+	return
 
 }
