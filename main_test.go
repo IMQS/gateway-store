@@ -207,6 +207,22 @@ func TestReadClient(t *testing.T) {
 	}
 }
 
+func TestCreateClient(t *testing.T) {
+	id := "124"
+	r := create(t, "client/"+fmt.Sprint(id)+"/"+fmt.Sprint("name"))
+	_, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	r, err = doRequest("GET", fmt.Sprintf("%v/%v", originURL, "client/"+fmt.Sprint(id)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkHTTPResponseCode(t, http.StatusOK, r.StatusCode, r.Status)
+
+}
+
 func TestDeleteClient(t *testing.T) {
 	row := g.DB.QueryRow("2")
 	row.Scan(&id)
@@ -225,6 +241,14 @@ func TestDeleteClient(t *testing.T) {
 	checkHTTPResponseCode(t, http.StatusOK, r.StatusCode, r.Status)
 }
 
+func TestUpdateClient(t *testing.T) {
+	row := g.DB.QueryRow("2")
+	row.Scan(&id)
+	g.Log.Debugf(" id %d", id)
+
+	//r := update(t, "client/"+fmt.Sprint(id))
+}
+
 func TestReadAllMessage(t *testing.T) {
 	get(t, "")
 }
@@ -240,6 +264,26 @@ func get(t *testing.T, url string) *http.Response {
 
 func delete(t *testing.T, url string) *http.Response {
 	r, err := doRequest("DELETE", fmt.Sprintf("%v/%v", originURL, url))
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkHTTPResponseCode(t, http.StatusOK, r.StatusCode, r.Status)
+	return r
+}
+
+func create(t *testing.T, url string) *http.Response {
+	s := fmt.Sprintf("%v/%v", originURL, url)
+	g.Log.Debugf("URL %v", s)
+	r, err := doRequest("PUT", s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkHTTPResponseCode(t, http.StatusOK, r.StatusCode, r.Status)
+	return r
+}
+
+func update(t *testing.T, url string) *http.Response {
+	r, err := doRequest("PUT", fmt.Sprintf("%v/%v", originURL, url))
 	if err != nil {
 		t.Fatal(err)
 	}

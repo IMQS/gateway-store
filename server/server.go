@@ -102,7 +102,7 @@ func NewServer(g *globals.Globals) *Server {
 
 	//Type
 	createTypeHandler := defaultHandler.ThenFunc(s.createType)
-	r.Handle("/client/{id:[0-9]+}/{name:[A-Za-z0-9]+}", createTypeHandler).Methods(http.MethodPost)
+	r.Handle("/type/{id:[0-9]+}/{name:[A-Za-z0-9]+}", createTypeHandler).Methods(http.MethodPost)
 
 	readTypeAllHandler := defaultHandler.ThenFunc(s.readAllType)
 	r.Handle("/type", readTypeAllHandler).Methods(http.MethodGet)
